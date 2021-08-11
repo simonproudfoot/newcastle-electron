@@ -1,4 +1,4 @@
-# electron-quick-start
+# Fuzzy electron
 
 
 ## To Use
