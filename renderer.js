@@ -6,26 +6,43 @@
 // process.
 // Opens the image in the default image viewer and waits for the opened app to quit.
 
-var dgram = require('dgram');
-function sendPacket(message) {
-    // example 192.168.0.255 5000 TXXX
-    var client = dgram.createSocket('udp4');
-    if (message) {
-        client.send(message, 0, message.length, 5000, '192.168.0.255', (error) => {
-            if (error) {
-                client.close();
-            }
-        });
-    }
-}
+
+// INSTALL 3RD PARTY APPS WITH NPM AND INCLUDE THEM HERE
+let $ = require('jquery');
+let jQuery = require('jquery');
+require('bootstrap');
+require('jquery-idletimer');
+require('./js/app.js');
+const {ipcRenderer} = require('electron');
+
 // self executing function here
 (function () {
-    // Listen for clicks on "A" tags with data-script attributes    
-    document.querySelectorAll('a').forEach(item => {
-        item.addEventListener('click', e => {
-            var message = e.target.getAttribute('data-script');
-            sendPacket(message)
+    // SET ADMIN MODE  
+    if (sessionStorage.getItem("admin") === null) {
+        document.getElementById('adminModal').style.display = 'block'
+    } else {
+        document.getElementById('adminModal').style.display = 'none'
+    }
 
-        })
+
+    $("[data-adminmode]").click(function (e) {
+        const mode = e.target.getAttribute('data-adminmode')
+        document.getElementById('adminModal').style.display = 'none'
+        sessionStorage.setItem("admin", mode);
+        setMode(mode)
     })
+
+    function setMode(adminMode) {
+        if (adminMode == 'true') {
+            document.getElementById('app').classList.remove('productionMode')
+            const {ipcRenderer} = require('electron');
+
+            // ...
+            ipcRenderer.send('resize-window')
+
+        } else {
+            document.getElementById('app').classList.add('productionMode')
+            // window.setFullScreen(true);
+        }
+    }
 })();
